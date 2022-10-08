@@ -1,0 +1,82 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+if [ -d ~/.bashrc.d ]; then
+	for rc in ~/.bashrc.d/*; do
+		if [ -f "$rc" ]; then
+			. "$rc"
+		fi
+	done
+fi
+
+unset rc
+. "$HOME/.cargo/env"
+
+# ~~~~~~~~~~~~~~~~ EDITS BELOW ~~~~~~~~~~~~~~~~~~ #
+# DEFAULT DIRECTORY
+cd ~/Documents
+
+# PROMPT
+source ~/.git-prompt.sh
+#PS1="\[$(tput bold)\]\[\033[38;5;194m\][\w\[$(tput sgr0)\]\[\033[38;5;176m\]\$(__git_ps1)\[$(tput sgr0)\]\[$(tput bold)\]\[\033[38;5;194m\]]\\$\[$(tput sgr0)\] "
+if [[ -f ~/.rainbow_ps1 ]]; then
+	. ~/.rainbow_ps1
+fi
+
+# EDIT/SUDOEDIT TO VIM
+export EDITOR=/usr/bin/nvim
+export SUDO_EDITOR=/usr/bin/vimx
+
+# ALIASES (programs)
+alias icat="kitty +kitten icat"
+alias hgrep="kitty +kitten hyperlinked_grep"
+alias kdiff="kitty +kitten diff"
+alias ff='firefox'
+alias vim='vimx'
+alias svim='sudoedit'
+
+# ALIASES (programs w/ defaults)
+alias ls="ls --hyperlink=auto --color"
+if [[ "$TERM_PROGRAM" == 'vscode' ]]; then
+	alias rg='~/.rg_vscode.sh'
+fi
+alias vimrc='vimx ~/.vimrc'
+alias bashrc='vimx ~/.bashrc'
+alias initlua='nvim ~/.config/nvim/init.lua'
+alias plugins='nvim ~/.config/nvim/lua/plugins.lua'
+alias xclipc='xclip -selection clipboard'
+
+# ALIASES (other)
+alias please='sudo $(fc -ln -1)'
+
+# USER SCRIPTS
+alias mkd="source ~/.config/bash/mkd.sh"
+alias tagrm="~/.config/bash/tagrm.sh"
+alias cds="source ~/.config/bash/cds.sh"
+
+# SEARCH TAGS
+# The idea is to use #comments at the end of some bash commands to "tag" them for easier finding with Ctrl+r
+# Cleaning up tags can be tricky, so here's some scripts to help control that
+# grep -n "#tagname" ~/.bash_history | cut -f1 -d:
+# above line will get line number(s) of matching tags
+# todo: removal of tags
+# todo: commands from the current session do not get put into bash history until the terminal is closed. How do I temporarily use tags? This solution only works for long-term stuff
+
+# BEGIN_KITTY_SHELL_INTEGRATION
+if test -n "$KITTY_INSTALLATION_DIR" -a -e "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; then source "$KITTY_INSTALLATION_DIR/shell-integration/bash/kitty.bash"; fi
+# END_KITTY_SHELL_INTEGRATION
